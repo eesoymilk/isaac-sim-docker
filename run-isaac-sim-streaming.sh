@@ -7,7 +7,7 @@ ISAAC_VERSION="5.1.0"
 USE_TAILSCALE=false
 USE_DOCKER=false
 PORT=49100
-ISAAC_SIM_DIR="${HOME}/isaac-sim"
+ISAAC_SIM_DIR="${HOME}/isaacsim"
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
@@ -39,7 +39,7 @@ while [[ $# -gt 0 ]]; do
             echo "  --help               Show this help message"
             echo ""
             echo "Native Mode (default):"
-            echo "  Runs Isaac Sim from ~/isaac-sim/isaac-sim.streaming.sh"
+            echo "  Runs Isaac Sim from ~/isaacsim/isaac-sim.streaming.sh"
             echo "  Requires Isaac Sim to be installed locally"
             echo ""
             echo "Docker Mode (--docker):"
