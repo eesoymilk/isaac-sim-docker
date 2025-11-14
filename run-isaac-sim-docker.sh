@@ -5,12 +5,17 @@ set -e
 # Default values
 ISAAC_VERSION="5.1.0"
 USE_TAILSCALE=false
+PORT=49100
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
         --version)
             ISAAC_VERSION="$2"
+            shift 2
+            ;;
+        --port)
+            PORT="$2"
             shift 2
             ;;
         --tailscale)
@@ -22,6 +27,7 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "Options:"
             echo "  --version VERSION    Isaac Sim version (default: 5.1.0)"
+            echo "  --port PORT          TCP port for streaming (default: 49100)"
             echo "  --tailscale          Use Tailscale IP instead of public IP"
             echo "  --help               Show this help message"
             exit 0
@@ -124,7 +130,7 @@ docker run --name ${CONTAINER_NAME} --entrypoint bash -dit --gpus all \
     -v ${BASE_DIR}/pkg:/isaac-sim/.local/share/ov/pkg:rw \
     -u 1234:1234 \
     ${IMAGE_NAME} \
-    -c "./runheadless.sh --/app/livestream/publicEndpointAddress=${ENDPOINT_IP} --/app/livestream/port=49100"
+    -c "./runheadless.sh --/app/livestream/publicEndpointAddress=${ENDPOINT_IP} --/app/livestream/port=${PORT}"
 
 echo "Container started. Waiting for Isaac Sim to load..."
 echo ""
@@ -147,7 +153,7 @@ echo "║                                                            ║"
 echo "║  Connect using Isaac Sim WebRTC Streaming Client:         ║"
 echo "║                                                            ║"
 echo "║  IP Address:  ${ENDPOINT_IP}                                        ║"
-echo "║  Port:        49100                                        ║"
+echo "║  Port:        ${PORT}                                        ║"
 echo "║                                                            ║"
 echo "╚════════════════════════════════════════════════════════════╝"
 echo ""

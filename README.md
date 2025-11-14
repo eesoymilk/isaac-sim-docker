@@ -19,6 +19,7 @@ Detects your public IP, starts Isaac Sim in background, and displays connection 
 
 ```bash
 --version VERSION    Isaac Sim version (default: 5.1.0)
+--port PORT          TCP port for streaming (default: 49100)
 --tailscale          Use Tailscale IP instead of public IP
 --help               Show help
 ```
@@ -27,7 +28,8 @@ Detects your public IP, starts Isaac Sim in background, and displays connection 
 
 ```bash
 ./run-isaac-sim-docker.sh --tailscale
-./run-isaac-sim-docker.sh --version 5.0.0 --tailscale
+./run-isaac-sim-docker.sh --port 8080
+./run-isaac-sim-docker.sh --version 5.0.0 --tailscale --port 8080
 ```
 
 ## Managing Container
@@ -40,6 +42,6 @@ docker stop isaac-sim         # Stop
 
 ## Connect
 
-Use **Isaac Sim WebRTC Streaming Client** with the IP and port (49100) shown by the script.
+Use **Isaac Sim WebRTC Streaming Client** with the IP and port shown by the script.
 
 **Resources:** [Docs](https://docs.isaacsim.omniverse.nvidia.com/) | [Container Guide](https://docs.isaacsim.omniverse.nvidia.com/5.1.0/installation/install_container.html)
