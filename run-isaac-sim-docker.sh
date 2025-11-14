@@ -76,9 +76,19 @@ if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
     case $choice in
         1)
             echo "Stopping and removing existing container..."
-            docker stop ${CONTAINER_NAME} 2>/dev/null || true
-            docker rm ${CONTAINER_NAME} 2>/dev/null || true
-            echo "Container removed. Starting fresh..."
+            docker rm -f ${CONTAINER_NAME}
+            # Verify container is actually removed
+            for i in {1..5}; do
+                if ! docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
+                    echo "Container removed. Starting fresh..."
+                    break
+                fi
+                if [ $i -eq 5 ]; then
+                    echo "Error: Failed to remove container after multiple attempts"
+                    exit 1
+                fi
+                sleep 1
+            done
             ;;
         2)
             echo "Exiting. Use the commands above to interact with the existing container."
