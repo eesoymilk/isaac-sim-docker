@@ -159,7 +159,7 @@ if [ "$USE_DOCKER" = true ]; then
         -v ${BASE_DIR}/pkg:/isaac-sim/.local/share/ov/pkg:rw \
         -u 1234:1234 \
         ${IMAGE_NAME} \
-        -c "./runheadless.sh --/app/livestream/publicEndpointAddress=${ENDPOINT_IP} --/app/livestream/port=${PORT} --/renderer/activeGpu=${GPU_ID}"
+        -c "./runheadless.sh --/app/livestream/publicEndpointAddress=${ENDPOINT_IP} --/app/livestream/port=${PORT} --/renderer/multiGpu/Enabled=false --/renderer/activeGpu=${GPU_ID}"
 
     echo "Container started. Waiting for Isaac Sim to load..."
     echo ""
@@ -246,10 +246,11 @@ else
 
     # Change to Isaac Sim directory and run the streaming script in background
     cd "$ISAAC_SIM_DIR"
-    ./isaac-sim.streaming.sh \
+    CUDA_VISIBLE_DEVICES=${GPU_ID} ./isaac-sim.streaming.sh \
         --/app/livestream/publicEndpointAddress="${ENDPOINT_IP}" \
         --/app/livestream/port="${PORT}" \
-        --/renderer/activeGpu="${GPU_ID}" \
+        --/renderer/multiGpu/Enabled=false \
+        --/renderer/activeGpu=${GPU_ID} \
         > "$LOG_FILE" 2>&1 &
 
     # Save PID
