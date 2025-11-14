@@ -3,10 +3,10 @@
 set -e
 
 # Default values
-ISAAC_VERSION="5.1.0"
 USE_TAILSCALE=false
 USE_DOCKER=false
 PORT=49100
+GPU_ID=0
 ISAAC_SIM_DIR="${HOME}/isaacsim"
 
 # Parse arguments
@@ -16,12 +16,12 @@ while [[ $# -gt 0 ]]; do
             USE_DOCKER=true
             shift
             ;;
-        --version)
-            ISAAC_VERSION="$2"
-            shift 2
-            ;;
         --port)
             PORT="$2"
+            shift 2
+            ;;
+        --gpu)
+            GPU_ID="$2"
             shift 2
             ;;
         --tailscale)
@@ -33,8 +33,8 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "Options:"
             echo "  --docker             Run Isaac Sim in Docker (default: native)"
-            echo "  --version VERSION    Isaac Sim version for Docker (default: 5.1.0)"
             echo "  --port PORT          TCP port for streaming (default: 49100)"
+            echo "  --gpu GPU_ID         GPU to use for rendering (default: 0)"
             echo "  --tailscale          Use Tailscale IP instead of public IP"
             echo "  --help               Show this help message"
             echo ""
@@ -81,7 +81,7 @@ fi
 # DOCKER MODE
 # ==============================================================================
 if [ "$USE_DOCKER" = true ]; then
-    IMAGE_NAME="nvcr.io/nvidia/isaac-sim:${ISAAC_VERSION}"
+    IMAGE_NAME="nvcr.io/nvidia/isaac-sim:5.1.0"
     BASE_DIR="${HOME}/docker/isaac-sim"
     CONTAINER_NAME="isaac-sim"
 
@@ -159,7 +159,7 @@ if [ "$USE_DOCKER" = true ]; then
         -v ${BASE_DIR}/pkg:/isaac-sim/.local/share/ov/pkg:rw \
         -u 1234:1234 \
         ${IMAGE_NAME} \
-        -c "./runheadless.sh --/app/livestream/publicEndpointAddress=${ENDPOINT_IP} --/app/livestream/port=${PORT}"
+        -c "./runheadless.sh --/app/livestream/publicEndpointAddress=${ENDPOINT_IP} --/app/livestream/port=${PORT} --/renderer/activeGpu=${GPU_ID}"
 
     echo "Container started. Waiting for Isaac Sim to load..."
     echo ""
@@ -249,6 +249,7 @@ else
     ./isaac-sim.streaming.sh \
         --/app/livestream/publicEndpointAddress="${ENDPOINT_IP}" \
         --/app/livestream/port="${PORT}" \
+        --/renderer/activeGpu="${GPU_ID}" \
         > "$LOG_FILE" 2>&1 &
 
     # Save PID
